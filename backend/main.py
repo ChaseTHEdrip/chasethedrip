@@ -39,7 +39,16 @@ async def upload_files(files: list[UploadFile] = File(...)):
     """Upload one or more files."""
     saved = []
     for file in files:
-        path = get_file_path(file.filename or "")
+        if not file.filename:
+            raise HTTPException(status_code=400, detail="Uploaded file is missing a filename.")
+        path = get_file_path(file.filename)
+
+        # Enforce size limit without reading the whole file into memory when possible
+        if file.size is not None and file.size > MAX_FILE_SIZE:
+            raise HTTPException(
+                status_code=413,
+                detail=f"File '{path.name}' exceeds the {MAX_FILE_SIZE // (1024 * 1024)} MB limit.",
+            )
 
         content = await file.read()
         if len(content) > MAX_FILE_SIZE:

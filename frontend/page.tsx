@@ -31,7 +31,8 @@ export default function UploadPage() {
       if (!res.ok) throw new Error(`Request failed (${res.status})`);
       const data = await res.json();
       setFiles(data.files ?? []);
-    } catch {
+    } catch (e) {
+      console.error("Failed to load files:", e);
       setError("Failed to load files.");
     }
   }, []);
