@@ -1,5 +1,4 @@
 fastapi
 uvicorn
-aiogram
+requests
 stripe
-pydantic
